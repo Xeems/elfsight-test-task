@@ -5,7 +5,6 @@ import { useOutsideClick } from '../../hooks';
 
 export function Select({ value, name, onChange, placeholder, options = [] }) {
   const [open, setOpen] = useState(false);
-  const [val, setValue] = useState(value);
 
   const ref = useRef(null);
   useOutsideClick(ref, () => {
@@ -14,18 +13,21 @@ export function Select({ value, name, onChange, placeholder, options = [] }) {
 
   const handleChange = useCallback(
     (e) => {
-      const value = String(e.currentTarget.dataset.value);
-      setValue(value);
-      onChange(name, value);
+      const selectedValue = String(e.currentTarget.dataset.value);
+      onChange(name, selectedValue);
       setOpen(false);
     },
     [name, onChange]
   );
 
-  const clearValue = useCallback((e) => {
-    e.stopPropagation();
-    setValue(null);
-  }, []);
+  const clearValue = useCallback(
+    (e) => {
+      e.stopPropagation();
+      onChange(name, '');
+      setOpen(false);
+    },
+    [name, onChange]
+  );
 
   const handleOpen = useCallback(() => {
     setOpen((prev) => !prev);
@@ -33,11 +35,11 @@ export function Select({ value, name, onChange, placeholder, options = [] }) {
 
   return (
     <Wrapper ref={ref}>
-      <Box onClick={handleOpen} $empty={!val}>
-        <Text>{val || placeholder}</Text>
+      <Box onClick={handleOpen} $empty={!value}>
+        <Text>{value || placeholder}</Text>
 
         <IconWrapper>
-          {val ? (
+          {value ? (
             <ClearIcon onClick={clearValue}>✕</ClearIcon>
           ) : (
             <Arrow open={open}>❯</Arrow>
@@ -52,7 +54,7 @@ export function Select({ value, name, onChange, placeholder, options = [] }) {
               key={opt}
               data-value={opt}
               onClick={handleChange}
-              $active={val === opt}
+              $active={value === opt}
             >
               {opt}
             </Item>

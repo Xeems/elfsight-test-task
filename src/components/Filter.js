@@ -13,6 +13,7 @@ export function Filter() {
   const handleSubmit = useCallback(
     (e) => {
       e.preventDefault();
+      console.log(123);
       apply();
     },
     [apply]
@@ -20,6 +21,7 @@ export function Filter() {
 
   const handleFilterChange = useCallback(
     (name, value) => {
+      console.log(name, value);
       handleChange(name, value);
     },
     [handleChange]

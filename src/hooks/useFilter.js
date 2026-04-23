@@ -28,21 +28,22 @@ export function useFilter() {
   };
 
   const apply = () => {
-    const url = new URL(window.location);
     const params = new URLSearchParams();
 
     Object.entries(form).forEach(([key, value]) => {
-      if (value) params.set(key, value);
+      // Проверяем на наличие значения.
+      // Если value равно '', null или undefined — ключ НЕ добавится в params
+      if (value) {
+        params.set(key, value);
+      }
     });
 
-    window.history.pushState(
-      {},
-      '',
-      `${window.location.pathname}?${params.toString()}`
-    );
+    const search = params.toString();
+    const newUrl = `${window.location.pathname}${search ? `?${search}` : ''}`;
 
-    url.search = params.toString();
-    window.location.href = url.href;
+    // Важно: если используете window.location.href, страница перезагрузится
+    // и getFormFromUrl заново прочитает URL.
+    window.location.href = newUrl;
   };
 
   const reset = () => {
